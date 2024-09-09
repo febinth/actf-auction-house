@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  actf-db:
+    image: febinth/actf-db:latest
+    ports:
+      - "5432:5432"
+      - "23:23"
+    networks:
+      actf_net:
+        ipv4_address: 172.19.0.3
+
+  actf-ttp:
+    image: febinth/actf-ttp:latest
+    ports:
+      - "8001:8001"
+    networks:
+      actf_net:
+        ipv4_address: 172.19.0.30
+  
+  actf-action:
+    image: febinth/actf-action:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - actf-db
+      - actf-ttp
+    networks:
+      actf_net:
+        ipv4_address: 172.19.0.20
+
+  actf-sniffer:
+    image: febinth/actf-sniffer:latest
+    ports:
+      - "2222:22"
+    networks:
+      actf_net:
+        ipv4_address: 172.19.0.2
+
+networks:
+  actf_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/24
+          gateway: 172.19.0.1
